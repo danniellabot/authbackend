@@ -16,7 +16,7 @@ mongoose
 		app.use(express.json()) 
 		app.use("/api/users", users)
 
-		app.listen(3000, () => {
+		app.listen(3001, () => {
 			console.log("Server has started!")
 		})
 	})
