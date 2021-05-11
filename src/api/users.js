@@ -4,8 +4,10 @@ import jwt from "jsonwebtoken";
 import validateRegisterInput from "../validation/register";
 import validateLoginInput from "../validation/login";
 import Users from "../models/User";
+import auth from '../middleware/auth'
 
 const saltRounds = 10
+// generate a salt randomly and add as a key in db 
 
 const router = express.Router();
 
@@ -13,6 +15,8 @@ router.post("/register", async (req, res) => {
   try {
 
     const hashed = await bcrypt.hash(req.body.password, saltRounds)
+
+    // add if user already exists
 
     const newUser = new Users({
       name: req.body.name,
@@ -45,11 +49,10 @@ router.post("/login", async (req, res) => {
             }
             const accessToken = jwt.sign(payload, process.env.SECRET_OR_KEY)
             res.json({
-                success: true,
-                token: "Bearer " + accessToken
+                accessToken,
+                payload
               })
-          //   ..... further code to maintain authentication like jwt or sessions
-          //res.send("Auth Successful");
+      
         } else {
           res.send("Wrong username or password.");
         }
@@ -61,5 +64,11 @@ router.post("/login", async (req, res) => {
       console.log(err);
     }
   });
+
+router.get("/profile", auth, async (req, res) => {
+  const user = await Users.findById(req.user.id).select('-password')
+  res.json(user)
+
+})
 
 module.exports = router;
