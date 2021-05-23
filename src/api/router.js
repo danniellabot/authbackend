@@ -1,8 +1,6 @@
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import validateRegisterInput from "../validation/register";
-import validateLoginInput from "../validation/login";
 import Users from "../models/User";
 import auth from '../middleware/auth'
 
@@ -11,12 +9,16 @@ const saltRounds = 10
 
 const router = express.Router();
 
-router.post("/register", async (req, res) => {
-  try {
+const students = ["Elie", "Matt", "Joel", "Michael"];
 
+router.post("/register", async (req, res) => {
+
+  try {
+    // console.log('......before run')
+    // console.log('....request', req)
     const hashed = await bcrypt.hash(req.body.password, saltRounds)
 
-    // add if user already exists
+    // TODO add check if user already exists
 
     const newUser = new Users({
       name: req.body.name,
@@ -24,11 +26,11 @@ router.post("/register", async (req, res) => {
       password: hashed,
     });
 
-    await newUser.save();
-    res.send(newUser);
+    const ret = await newUser.save();
+    return res.send(ret);
 
   } catch (err) {
-    console.log(err);
+    console.log(err)
   }
 });
 
@@ -65,10 +67,14 @@ router.post("/login", async (req, res) => {
     }
   });
 
+router.get('/sample', (req,res) => {
+  return res.json(students)
+})
+
 router.get("/profile", auth, async (req, res) => {
   const user = await Users.findById(req.user.id).select('-password')
   res.json(user)
 
 })
 
-module.exports = router;
+export default router;

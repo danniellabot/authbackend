@@ -1,22 +1,54 @@
 import express from "express";
-import mongoose from 'mongoose'
-import dotenv  from "dotenv"
-import users from './api/users'
+import router from "./api/router";
 
-dotenv.config()
+const createServer = () => {
+  const app = express()
+	app.use(express.json())
+	app.use("/api", router)
+	return app
+}
 
-const app = express();
+export default createServer
 
-app.use(express.json())
+// dotenv.config();
 
-mongoose
-	.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-	.then(() => {
-		const app = express()
-		app.use(express.json()) 
-		app.use("/api/users", users)
+// const app = express();
 
-		app.listen(3001, () => {
-			console.log("Server has started!")
-		})
-	})
+// app.use(express.json());
+
+// mongoose.connect(process.env.MONGO_URI, {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// });
+
+// const db = mongoose.connection
+// db.once('open', _ => {
+//   console.log('Database connected:', process.env.MONGO_URI)
+// })
+
+// db.on('error', err => {
+//   console.error('connection error:', err)
+// })
+
+
+// app.use("/api/users", router);
+
+// if(process.env.NODE_ENV !== 'test'){
+//   app.listen(6001, () => {
+//     console.log("Server has started 6001!");
+//   });
+// }
+
+
+// mongoose
+// 	.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+// 	.then(() => {
+// 		// app.use(express.json())
+// 		app.use("/api/users", router)
+
+// 		app.listen(3001, () => {
+// 			console.log("Server has started!")
+// 		})
+// 	})
+
+//export default app
